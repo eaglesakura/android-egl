@@ -95,6 +95,21 @@ uploadArchives {
                 url "https://raw.githubusercontent.com/eaglesakura/${ARTIFACT_NAME}/master/LICENSE.txt"
             }
         }
+        dependencies {
+            dependency {
+                groupId = 'com.eaglesakura'
+                artifactId = 'simple-logger'
+                version = '1.0.0'
+                scope = 'compile'
+            }
+
+            dependency {
+                groupId = 'com.eaglesakura'
+                artifactId = 'simple-utils'
+                version = '1.0.1'
+                scope = 'compile'
+            }
+        }
     }
 }
 
