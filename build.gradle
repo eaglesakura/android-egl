@@ -1,0 +1,108 @@
+def ARTIFACT_VERSION = "1.0.0"
+def ARTIFACT_NAME = file(".").absoluteFile.name
+
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.5.0'
+    }
+}
+
+repositories {
+    maven { url "http://eaglesakura.github.io/maven/" }
+    mavenCentral()
+}
+
+apply plugin: 'com.android.library'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        minSdkVersion 10
+        targetSdkVersion 23
+    }
+}
+
+dependencies {
+    compile 'com.eaglesakura:simple-logger:1.0.0'
+}
+
+apply plugin: 'maven'
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+android.libraryVariants.all { variant ->
+    if (!"release".equals(variant.name) || "".equals(ARTIFACT_VERSION)) {
+        return;
+    }
+
+    task("javadoc", type: Javadoc) {
+        title = "${file(".").name} ver ${ARTIFACT_VERSION}"
+        description "Generates Android Javadoc for $variant.name."
+        source = variant.javaCompile.source
+        ext.androidJar = "${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"
+        classpath = files(variant.javaCompile.classpath.files) + files(ext.androidJar) + files("build/intermediates/classes/${variant.name}/")
+        options.links("http://docs.oracle.com/javase/7/docs/api/");
+        options.links("http://d.android.com/reference/");
+        exclude '**/BuildConfig.java'
+        exclude '**/*Dao.java' /* ignore greenDAO */
+        exclude '**/DaoMaster.java' /* ignore greenDAO */
+        exclude '**/DaoSession.java' /* ignore greenDAO */
+        exclude '**/R.java' /* ignore greenDAO */
+    }
+
+
+    task("javadocJar", type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    artifacts {
+        archives javadocJar
+        archives sourcesJar
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri(new File("${System.env.MAVEN_LOCAL_REPO}")))
+            pom.version = ARTIFACT_VERSION
+            pom.groupId = "com.eaglesakura"
+            pom.artifactId = ARTIFACT_NAME
+        }
+    }
+}
+
+[uploadArchives.repositories.mavenDeployer]*.pom*.whenConfigured { pom ->
+    pom.project {
+        inceptionYear '2016'
+        packaging 'aar'
+        licenses {
+            license {
+                name 'MIT License'
+                url "https://raw.githubusercontent.com/eaglesakura/${ARTIFACT_NAME}/master/LICENSE.txt"
+            }
+        }
+    }
+}
+
+task uploadJavadoc << {
+    def src = file("build/docs/javadoc/");
+    def dst = new File("${System.env.MAVEN_LOCAL_REPO}/doc/${ARTIFACT_NAME}/");
+    dst.deleteDir();
+    dst.mkdirs();
+
+    ["/usr/bin/rsync", "-a", src.absolutePath, dst.absolutePath].execute().text;
+}
