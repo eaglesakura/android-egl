@@ -31,8 +31,17 @@ android {
     }
 }
 
+// Local or maven
+if (!hasProperty("EGLIBRARY_COMPILE_LOCAL")) {
+    ext.EGLIBRARY_COMPILE_LOCAL = false
+}
+
 dependencies {
-    compile 'com.eaglesakura:simple-logger:1.0.+'
+    if (EGLIBRARY_COMPILE_LOCAL) {
+        compile project(':eglibrary:simple-logger')
+    } else {
+        compile 'com.eaglesakura:simple-logger:1.0.+'
+    }
 }
 
 apply plugin: 'maven'
