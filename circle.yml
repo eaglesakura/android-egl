@@ -1,0 +1,28 @@
+checkout:
+  post:
+    - chmod 755 ./gradlew
+    - chmod 755 ./script/deploy.sh
+machine:
+  timezone:
+    Asia/Tokyo
+  java:
+    version: oraclejdk7
+  environment:
+    ANDROID_HOME: /usr/local/android-sdk-linux
+    GRADLE_OPTS: -Xmx4G -Dorg.gradle.daemon=true
+    JAVA_OPTS: -Dfile.encoding=UTF-8 -Xms1024m -Xmx4096m -XX:MaxPermSize=2048m
+dependencies:
+  override:
+    - sh -c "$(curl -fsSL https://raw.githubusercontent.com/eaglesakura/build-dependencies/master/android-sdk.sh)"
+test:
+  override:
+    - echo "Skip test task"
+deployment:
+  canary:
+    branch: 1.0.x
+    commands:
+      - rm -rf "/home/ubuntu/.gradle/"
+      - rm -rf "/home/ubuntu/.m2"
+      - rm -rf "/home/ubuntu/.ivy2"
+      - rm -rf "/home/ubuntu/.gradle"
+      - ./script/deploy.sh
