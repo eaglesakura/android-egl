@@ -5,3 +5,4 @@ cygdrive/
 .idea/
 *.iml
 /ci-release
+/maven
