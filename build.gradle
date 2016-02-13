@@ -45,7 +45,7 @@ dependencies {
     if (EGLIBRARY_COMPILE_LOCAL) {
         compile project(':eglibrary:simple-logger')
     } else {
-        compile 'com.eaglesakura:simple-logger:1.0.+'
+        compile 'com.eaglesakura:simple-logger:1.+'
     }
 }
 
