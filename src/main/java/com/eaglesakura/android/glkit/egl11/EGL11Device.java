@@ -1,12 +1,11 @@
 package com.eaglesakura.android.glkit.egl11;
 
-import android.opengl.GLES20;
-
 import com.eaglesakura.android.glkit.EGLUtil;
 import com.eaglesakura.android.glkit.egl.GLESVersion;
 import com.eaglesakura.android.glkit.egl.IEGLContextGroup;
 import com.eaglesakura.android.glkit.egl.IEGLDevice;
-import com.eaglesakura.util.LogUtil;
+
+import android.opengl.GLES20;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -92,7 +91,7 @@ public class EGL11Device implements IEGLDevice {
                 EGLDisplay display = controller.display;
 
                 if (nativeWindow != null) {
-                    LogUtil.log("eglDestroySurface(%s)", surface.toString());
+                    EGLUtil.log("eglDestroySurface(%s)", surface.toString());
                     egl.eglDestroySurface(display, surface);
                 } else {
                     // EGLManagerにSurfaceのキャッシュを残す
@@ -121,8 +120,6 @@ public class EGL11Device implements IEGLDevice {
 
     /**
      * レンダリング対象として有効なEGLSurfaceを持っていればtrue
-     *
-     * @return
      */
     @Override
     public boolean hasSurface() {
@@ -169,17 +166,17 @@ public class EGL11Device implements IEGLDevice {
     @Override
     public boolean bind() {
         if (isBindedThread()) {
-            LogUtil.log("binded this thread");
+            EGLUtil.log("binded this thread");
             return false;
         }
 
         if (isBinded()) {
-            LogUtil.log("binded other thread");
+            EGLUtil.log("binded other thread");
             return false;
         }
 
         if (!hasSurface()) {
-            LogUtil.log("no surface");
+            EGLUtil.log("no surface");
             // surfaceを持たないならバインドも成功しない
             return false;
         }
@@ -280,8 +277,6 @@ public class EGL11Device implements IEGLDevice {
      * 廃棄リクエストを持っているならばtrue
      * <br>
      * trueの場合、速やかにunbindとdestroyを行わなければならない
-     *
-     * @return
      */
     @Override
     public boolean hasSurfaceDestroyRequest() {

@@ -3,7 +3,6 @@ package com.eaglesakura.android.glkit.egl11;
 import com.eaglesakura.android.glkit.EGLUtil;
 import com.eaglesakura.android.glkit.egl.GLESVersion;
 import com.eaglesakura.android.glkit.egl.IEGLContextGroup;
-import com.eaglesakura.util.LogUtil;
 
 import java.util.Stack;
 
@@ -13,7 +12,7 @@ import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.egl.EGLSurface;
 
-import static javax.microedition.khronos.egl.EGL10.*;
+import static javax.microedition.khronos.egl.EGL10.EGL_NO_CONTEXT;
 
 /**
  * ContextGroupを管理する
@@ -51,8 +50,6 @@ public class EGL11ContextGroup implements IEGLContextGroup {
 
     /**
      * コンテキスト生成処理を行う
-     *
-     * @return
      */
     EGLContext createContext() {
         synchronized (this) {
@@ -65,15 +62,15 @@ public class EGL11ContextGroup implements IEGLContextGroup {
             if (masterContext == null) {
                 result = egl.eglCreateContext(display, config, EGL_NO_CONTEXT, version.getContextAttribute());
                 masterContext = result;
-                LogUtil.log("create master context");
+                EGLUtil.log("create master context");
             } else {
                 result = egl.eglCreateContext(display, config, masterContext, version.getContextAttribute());
-                LogUtil.log("create shared context");
+                EGLUtil.log("create shared context");
             }
 
             if (result == EGL_NO_CONTEXT) {
                 EGLUtil.printEglError(egl.eglGetError());
-                LogUtil.log("create error shared context devices(%d)", deviceNum);
+                EGLUtil.log("create error shared context devices(%d)", deviceNum);
                 throw new IllegalStateException("eglCreateContext");
             }
 
@@ -85,8 +82,6 @@ public class EGL11ContextGroup implements IEGLContextGroup {
 
     /**
      * Context廃棄処理を行う
-     *
-     * @param context
      */
     void destroyContext(EGLContext context) {
         synchronized (this) {
@@ -103,13 +98,13 @@ public class EGL11ContextGroup implements IEGLContextGroup {
 
             // デバイス数が0になったなら、マスターも不要となる
             if (deviceNum == 0) {
-                for(EGLSurface surface : cacheSurfaces) {
+                for (EGLSurface surface : cacheSurfaces) {
                     egl.eglDestroySurface(display, surface);
-                    LogUtil.log("destroy cache surface(%s)", surface.toString());
+                    EGLUtil.log("destroy cache surface(%s)", surface.toString());
                 }
                 cacheSurfaces.clear();
 
-                LogUtil.log("desroy masterContext(%s)", masterContext.toString());
+                EGLUtil.log("desroy masterContext(%s)", masterContext.toString());
                 egl.eglDestroyContext(display, masterContext);
                 masterContext = null;
             }
