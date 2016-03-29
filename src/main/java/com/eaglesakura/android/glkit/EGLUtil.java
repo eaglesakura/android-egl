@@ -2,12 +2,11 @@ package com.eaglesakura.android.glkit;
 
 import android.graphics.SurfaceTexture;
 import android.os.Build;
+import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
-
-import com.eaglesakura.util.LogUtil;
 
 import javax.microedition.khronos.egl.EGL10;
 
@@ -64,14 +63,11 @@ public class EGLUtil {
                 break;
         }
 
-        LogUtil.log(message);
+        log(message);
     }
 
     /**
      * 引数のオブジェクトからEGLSurfaceを取得可能なNativeWindowオブジェクトを取り出す
-     *
-     * @param surface
-     * @return
      */
     public static Object getEglNativeWindow(Object surface) {
         if (surface instanceof SurfaceView) {
@@ -89,7 +85,11 @@ public class EGLUtil {
         }
 
         // unsupported
-        LogUtil.log("Unsupported Class(%s)", surface.getClass().getName());
+        log("Unsupported Class(%s)", surface.getClass().getName());
         return null;
+    }
+
+    public static void log(String msg, Object... args) {
+        Log.d("glkit", String.format(msg, args));
     }
 }

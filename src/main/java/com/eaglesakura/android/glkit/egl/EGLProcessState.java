@@ -1,6 +1,6 @@
 package com.eaglesakura.android.glkit.egl;
 
-import com.eaglesakura.util.LogUtil;
+import com.eaglesakura.android.glkit.EGLUtil;
 
 /**
  * プロセス単位でEGLの制御を行う
@@ -23,7 +23,7 @@ public class EGLProcessState {
             ++deviceNum;
 
             if (deviceNum == 1) {
-                LogUtil.log("EGLDevice == 1, request eglInitialize");
+                EGLUtil.log("EGLDevice == 1, request eglInitialize");
                 return true;
             } else {
                 return false;
@@ -44,7 +44,7 @@ public class EGLProcessState {
             }
 
             if (deviceNum == 0) {
-                LogUtil.log("EGLDevice == 0, request eglTerminate");
+                EGLUtil.log("EGLDevice == 0, request eglTerminate");
                 return true;
             } else {
                 return false;
