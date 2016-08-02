@@ -38,12 +38,11 @@ android {
     }
 
     lintOptions {
-        disable "DuplicateIds"
+//        disable "DuplicateIds"
         disable "NewApi"
-        disable "InvalidPackage"
-        disable "ProtectedPermissions"
-        disable "MissingTranslation"
-        abortOnError false
+//        disable "InvalidPackage"
+//        disable "ProtectedPermissions"
+//        disable "MissingTranslation"
     }
 
     // ignore include
