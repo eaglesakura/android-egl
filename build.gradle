@@ -36,13 +36,14 @@ android {
         minSdkVersion 10
         targetSdkVersion 24
     }
-    
+
     lintOptions {
         disable "DuplicateIds"
         disable "NewApi"
         disable "InvalidPackage"
         disable "ProtectedPermissions"
         disable "MissingTranslation"
+        abortOnError false
     }
 
     // ignore include
