@@ -36,6 +36,21 @@ android {
         minSdkVersion 10
         targetSdkVersion 24
     }
+    
+    lintOptions {
+        disable "DuplicateIds"
+        disable "NewApi"
+        disable "InvalidPackage"
+        disable "ProtectedPermissions"
+        disable "MissingTranslation"
+    }
+
+    // ignore include
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+    }
 }
 
 // Local or maven
