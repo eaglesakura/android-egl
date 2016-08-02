@@ -43,7 +43,7 @@ android {
         disable "InvalidPackage"
         disable "ProtectedPermissions"
         disable "MissingTranslation"
-//        abortOnError false
+        abortOnError false
     }
 
     // ignore include
