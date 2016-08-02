@@ -40,7 +40,7 @@ public class EGLProcessState {
         synchronized (lock) {
             --deviceNum;
             if (deviceNum < 0) {
-                throw new IllegalStateException(String.format("DeviceNum(%d) < 0", deviceNum));
+                throw new IllegalStateException("DeviceNum");
             }
 
             if (deviceNum == 0) {
