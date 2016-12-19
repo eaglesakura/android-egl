@@ -64,13 +64,6 @@ public class EGLSpecRequest {
 
     /**
      * 各種サーフェイスの色情報を指定する
-     *
-     * @param r
-     * @param g
-     * @param b
-     * @param a
-     * @param d
-     * @param s
      */
     public void setSurfaceColorSpec(int r, int g, int b, int a, int d, int s) {
         if (r >= 8 && g >= 8 && b >= 8) {
@@ -110,35 +103,37 @@ public class EGLSpecRequest {
             }
         }
 
-        switch (surfaceColor) {
-            case RGBA8:
-                result.add(EGL_RED_SIZE);
-                result.add(8);
-                result.add(EGL_GREEN_SIZE);
-                result.add(8);
-                result.add(EGL_BLUE_SIZE);
-                result.add(8);
-                result.add(EGL_ALPHA_SIZE);
-                result.add(8);
-                break;
-            case RGB8:
-                result.add(EGL_RED_SIZE);
-                result.add(8);
-                result.add(EGL_GREEN_SIZE);
-                result.add(8);
-                result.add(EGL_BLUE_SIZE);
-                result.add(8);
-                break;
-            case RGB565:
-                result.add(EGL_RED_SIZE);
-                result.add(5);
-                result.add(EGL_GREEN_SIZE);
-                result.add(6);
-                result.add(EGL_BLUE_SIZE);
-                result.add(5);
-                break;
-            default:
-                throw new UnsupportedOperationException(surfaceColor.toString());
+        if (surfaceColor != null) {
+            switch (surfaceColor) {
+                case RGBA8:
+                    result.add(EGL_RED_SIZE);
+                    result.add(8);
+                    result.add(EGL_GREEN_SIZE);
+                    result.add(8);
+                    result.add(EGL_BLUE_SIZE);
+                    result.add(8);
+                    result.add(EGL_ALPHA_SIZE);
+                    result.add(8);
+                    break;
+                case RGB8:
+                    result.add(EGL_RED_SIZE);
+                    result.add(8);
+                    result.add(EGL_GREEN_SIZE);
+                    result.add(8);
+                    result.add(EGL_BLUE_SIZE);
+                    result.add(8);
+                    break;
+                case RGB565:
+                    result.add(EGL_RED_SIZE);
+                    result.add(5);
+                    result.add(EGL_GREEN_SIZE);
+                    result.add(6);
+                    result.add(EGL_BLUE_SIZE);
+                    result.add(5);
+                    break;
+                default:
+                    throw new UnsupportedOperationException(surfaceColor.toString());
+            }
         }
 
         if (surfaceDepthBits > 0) {

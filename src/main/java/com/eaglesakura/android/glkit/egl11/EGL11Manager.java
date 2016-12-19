@@ -1,16 +1,16 @@
 package com.eaglesakura.android.glkit.egl11;
 
-import android.content.Context;
-import android.content.res.AssetManager;
-import android.util.Log;
-
 import com.eaglesakura.android.glkit.EGLUtil;
 import com.eaglesakura.android.glkit.egl.EGLProcessState;
 import com.eaglesakura.android.glkit.egl.EGLSpecRequest;
 import com.eaglesakura.android.glkit.egl.GLESVersion;
 import com.eaglesakura.android.glkit.egl.IEGLContextGroup;
-import com.eaglesakura.android.glkit.egl.IEGLManager;
 import com.eaglesakura.android.glkit.egl.IEGLDevice;
+import com.eaglesakura.android.glkit.egl.IEGLManager;
+
+import android.content.Context;
+import android.content.res.AssetManager;
+import android.util.Log;
 
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
@@ -22,6 +22,7 @@ import static javax.microedition.khronos.egl.EGL10.EGL_BLUE_SIZE;
 import static javax.microedition.khronos.egl.EGL10.EGL_DEPTH_SIZE;
 import static javax.microedition.khronos.egl.EGL10.EGL_GREEN_SIZE;
 import static javax.microedition.khronos.egl.EGL10.EGL_RED_SIZE;
+import static javax.microedition.khronos.egl.EGL10.EGL_RENDERABLE_TYPE;
 import static javax.microedition.khronos.egl.EGL10.EGL_STENCIL_SIZE;
 
 /**
@@ -101,20 +102,22 @@ public class EGL11Manager implements IEGLManager {
         int b_bits = 0;
         int a_bits = 0;
 
-        switch (request.surfaceColor) {
-            case RGBA8:
-                r_bits = g_bits = b_bits = a_bits = 8;
-                break;
-            case RGB8:
-                r_bits = g_bits = b_bits = 8;
-                break;
-            case RGB565:
-                r_bits = 5;
-                g_bits = 6;
-                b_bits = 5;
-                break;
-            default:
-                throw new UnsupportedOperationException(request.surfaceColor.toString());
+        if (request.surfaceColor != null) {
+            switch (request.surfaceColor) {
+                case RGBA8:
+                    r_bits = g_bits = b_bits = a_bits = 8;
+                    break;
+                case RGB8:
+                    r_bits = g_bits = b_bits = 8;
+                    break;
+                case RGB565:
+                    r_bits = 5;
+                    g_bits = 6;
+                    b_bits = 5;
+                    break;
+                default:
+                    throw new UnsupportedOperationException(request.surfaceColor.toString());
+            }
         }
 
         // 指定したジャストサイズのconfigを探す
@@ -127,16 +130,21 @@ public class EGL11Manager implements IEGLManager {
             final int config_a = getConfigAttrib(checkConfig, EGL_ALPHA_SIZE);
             final int config_d = getConfigAttrib(checkConfig, EGL_DEPTH_SIZE);
             final int config_s = getConfigAttrib(checkConfig, EGL_STENCIL_SIZE);
+            final int rendererType = getConfigAttrib(checkConfig, EGL_RENDERABLE_TYPE);
 
-            // RGBが指定サイズジャスト、ADSが指定サイズ以上あれば合格とする
-            if (config_r == r_bits && config_g == g_bits && config_b == b_bits
-                    && config_a >= a_bits // alphaはオプション
-                    && config_d >= request.surfaceDepthBits // depthはオプション
-                    && config_s >= request.surfaceStencilBits // stencilはオプション
-                    ) {
+            log("R(%d) G(%d) B(%d) A(%d) D(%d) S(%d) Renderer(%x)", config_r, config_g, config_b, config_a, config_d, config_s, rendererType);
 
-                log("R(%d) G(%d) B(%d) A(%d) D(%d) S(%d)", config_r, config_g, config_b, config_a, config_d, config_s);
-                return checkConfig;
+            if (request.surfaceColor != null) {
+                // RGBが指定サイズジャスト、ADSが指定サイズ以上あれば合格とする
+                if (config_r == r_bits && config_g == g_bits && config_b == b_bits
+                        && config_a >= a_bits // alphaはオプション
+                        && config_d >= request.surfaceDepthBits // depthはオプション
+                        && config_s >= request.surfaceStencilBits // stencilはオプション
+                        ) {
+
+                    log(" - Just Require");
+                    return checkConfig;
+                }
             }
         }
 
@@ -188,8 +196,6 @@ public class EGL11Manager implements IEGLManager {
 
     /**
      * デバイスの廃棄を行わせる
-     *
-     * @param device
      */
     void onDestroyDevice(EGL11Device device) {
         if (EGLProcessState.decrementDevice()) {
